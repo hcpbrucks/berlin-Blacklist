@@ -9,7 +9,7 @@ app.use(express.json());
 // =========================
 // ⚙️ CONFIG
 // =========================
-const FIVEM_URL = "http://94.249.138.10:30120/berlin_check/blacklist/add";
+const FIVEM_URL = "http://94.249.138.10:30121/berlin_check/blacklist/add";
 const API_KEY = "berlin_9xA7fK2L_secure_2026";
 
 // =========================
