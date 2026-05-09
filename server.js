@@ -2,35 +2,38 @@ const express = require("express");
 const fetch = require("node-fetch");
 
 const app = express();
+
+// JSON Middleware
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
-
-// 🔐 CONFIG
-const FIVEM_API = "http://94.249.138.10:30120/berlin_check/blacklist/add";
+// =========================
+// ⚙️ CONFIG
+// =========================
+const FIVEM_URL = "http://94.249.138.10:30120/berlin_check/blacklist/add";
 const API_KEY = "berlin_9xA7fK2L_secure_2026";
 
 // =========================
-// 🔥 TEST ROUTE
+// 🟢 TEST ROUTE
 // =========================
 app.get("/", (req, res) => {
-    res.send("Blacklist API läuft 🚀");
+    res.send("Berlin Blacklist API läuft");
 });
 
 // =========================
-// ➕ BLACKLIST ADD
+// 🔴 BLACKLIST ENDPOINT
 // =========================
-app.post("/blacklist", async (req, res) => {
+app.post("/blacklist/add", async (req, res) => {
     try {
+        console.log("📥 BOT REQUEST:", req.body);
+
         const { discordId, reason, license } = req.body;
 
         if (!discordId) {
             return res.json({ success: false, error: "missing_discordId" });
         }
 
-        console.log("Incoming:", req.body);
-
-        const response = await fetch(FIVEM_API, {
+        // 👉 SEND TO FIVEM
+        const response = await fetch(FIVEM_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -43,21 +46,29 @@ app.post("/blacklist", async (req, res) => {
             })
         });
 
-        const data = await response.text();
+        const text = await response.text();
 
-        console.log("FiveM Response:", data);
+        console.log("📤 FIVEM RESPONSE:", text);
 
         res.json({
             success: true,
-            fivem: data
+            fivem: text
         });
 
     } catch (err) {
-        console.error(err);
-        res.json({ success: false, error: "server_error" });
+        console.error("❌ ERROR:", err);
+
+        res.json({
+            success: false,
+            error: err.message
+        });
     }
 });
 
+// =========================
+// 🚀 START SERVER
+// =========================
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server läuft auf Port", PORT);
+    console.log("🚀 Server läuft auf Port", PORT);
 });
