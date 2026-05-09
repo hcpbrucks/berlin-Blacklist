@@ -33,18 +33,23 @@ app.post("/blacklist/add", async (req, res) => {
         }
 
         // 👉 SEND TO FIVEM
-        const response = await fetch(FIVEM_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": API_KEY
-            },
-            body: JSON.stringify({
-                discordId,
-                reason,
-                license
-            })
-        });
+const response = await fetch(FIVEM_URL, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY,
+        "Content-Length": Buffer.byteLength(JSON.stringify({
+            discordId,
+            reason,
+            license
+        }))
+    },
+    body: JSON.stringify({
+        discordId,
+        reason,
+        license
+    })
+});
 
         const text = await response.text();
 
